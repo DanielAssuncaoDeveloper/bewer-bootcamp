@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import z, { email } from "zod";
+import z from "zod";
 import {
   Form,
   FormControl,
@@ -65,7 +65,7 @@ const SignUpForm = () => {
         onError: (context) => {
           if (context.error.code === "USER_ALREADY_EXISTS")
             form.setError("email", { message: "E-mail já cadastrado." });
-          else toast.error(context.error.message)
+          else toast.error(context.error.messa)
         },
       },
     });
