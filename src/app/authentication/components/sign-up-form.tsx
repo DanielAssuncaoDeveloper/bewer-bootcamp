@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import z from "zod";
+import z, { email } from "zod";
 import {
   Form,
   FormControl,
@@ -22,17 +22,26 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
-  name: z.string().trim().nonempty("Informe seu nome."),
-  email: z.email("Informe um e-mail válido."),
-  password: z.string().min(8, "Informe uma senha válida."),
-  passwordConfirmation: z.string().min(8, "Informe uma senha válida."),
-}).refine((data) => data.password == data.passwordConfirmation, {error: "As senhas não são iguais.", path: ["passwordConfirmation"]});
+const formSchema = z
+  .object({
+    name: z.string().trim().nonempty("Informe seu nome."),
+    email: z.email("Informe um e-mail válido."),
+    password: z.string().min(8, "Informe uma senha válida."),
+    passwordConfirmation: z.string().min(8, "Informe uma senha válida."),
+  })
+  .refine((data) => data.password == data.passwordConfirmation, {
+    error: "As senhas não são iguais.",
+    path: ["passwordConfirmation"],
+  });
 
 type FormValues = z.infer<typeof formSchema>;
 
 const SignUpForm = () => {
+  const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,8 +52,23 @@ const SignUpForm = () => {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    console.log(values);
+  async function onSubmit(values: FormValues) {
+    authClient.signUp.email({
+      email: values.email,
+      password: values.password,
+      name: values.name,
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Conta criada com sucesso!");
+          router.push("/");
+        },
+        onError: (context) => {
+          if (context.error.code === "USER_ALREADY_EXISTS")
+            form.setError("email", { message: "E-mail já cadastrado." });
+          else toast.error(context.error.message)
+        },
+      },
+    });
   }
 
   return (
