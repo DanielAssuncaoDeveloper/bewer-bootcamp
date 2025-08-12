@@ -38,7 +38,6 @@ export default async function Home() {
         />
 
         <ProductList products={products} title="Mais vendidos" />
-
         <CategorySelector categories={categories} />
 
         <Image
