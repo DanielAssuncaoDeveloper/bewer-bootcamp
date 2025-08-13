@@ -10,6 +10,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import VariantSelector from "./components/variants-selector";
 import QuantitySelector from "./components/quantity-selector";
+import AddToCartButton from "./components/add-to-cart-button";
+import ProductActions from "./components/product-actions";
 
 interface ProductVariantPageProps {
   params: Promise<{ slug: string }>;
@@ -64,23 +66,12 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
           <h3 className="text-lg font-semibold">
             {formatCentsToBRL(productVariant.priceInCents)}
           </h3>
-        </div>    
-
-        <div className="px-5">
-          <QuantitySelector />
         </div>
 
-        <div className="flex flex-col space-y-4 px-5">
-          <Button className="rounded-full" variant="outline" size="lg">
-            Adicionar à sacola
-          </Button>
-          <Button className="rounded-full" size="lg">
-            Comprar agora
-          </Button>
+        <div className="space-y-5 px-5">
+          <p className="text-sm">{productVariant.product.description}</p>
 
-          <div className="px-5">
-            <p className="text-sm">{productVariant.product.description}</p>
-          </div>
+          <ProductActions productVariantId={productVariant.id} />
 
           <ProductList title="Talvez você goste" products={likelyProducts} />
         </div>
