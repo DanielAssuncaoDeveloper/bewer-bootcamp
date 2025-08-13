@@ -9,7 +9,7 @@ import { eq } from "drizzle-orm";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import VariantSelector from "./components/variants-selector";
-import { truncate } from "fs";
+import QuantitySelector from "./components/quantity-selector";
 
 interface ProductVariantPageProps {
   params: Promise<{ slug: string }>;
@@ -22,9 +22,9 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
     with: {
       product: {
         with: {
-          variants: true
-        }
-      }
+          variants: true,
+        },
+      },
     },
   });
 
@@ -64,16 +64,18 @@ const ProductVariantPage = async ({ params }: ProductVariantPageProps) => {
           <h3 className="text-lg font-semibold">
             {formatCentsToBRL(productVariant.priceInCents)}
           </h3>
-        </div>
+        </div>    
 
-        <div>{/* Quantidade */}</div>
+        <div className="px-5">
+          <QuantitySelector />
+        </div>
 
         <div className="flex flex-col space-y-4 px-5">
           <Button className="rounded-full" variant="outline" size="lg">
-            Comprar agora
+            Adicionar à sacola
           </Button>
           <Button className="rounded-full" size="lg">
-            Adicionar ao carrinho
+            Comprar agora
           </Button>
 
           <div className="px-5">
